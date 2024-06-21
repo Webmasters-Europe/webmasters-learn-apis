@@ -10,8 +10,10 @@ class BodySeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
         $json = Storage::disk('seed')->get('systeme-solaire/bodies.json');
 
