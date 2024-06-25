@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::domain(env('SWAPI_URL'))->group(function () {
+Route::domain(config('settings.swapi_url'))->group(function () {
     Route::view('/documentation', 'documentation.swapi')->name('documentation.swapi');
 });
 
-Route::domain(env('SOLAR_URL'))->group(function () {
+Route::domain(config('settings.solar_url'))->group(function () {
     Route::view('/documentation', 'documentation.solar')->name('documentation.solar');
 });
 
