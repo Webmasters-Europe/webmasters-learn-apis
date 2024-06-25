@@ -13,14 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::domain(config('settings.swapi_url'))->group(function () {
-    Route::view('/documentation', 'documentation.swapi')->name('documentation.swapi');
-});
+Route::pattern('domain', config('settings.domain_pattern'));
 
-Route::domain(config('settings.solar_url'))->group(function () {
-    Route::view('/documentation', 'documentation.solar')->name('documentation.solar');
-});
+// Route::domain(config('settings.swapi_url'))->group(function () {
+//     Route::view('/documentation', 'documentation.swapi')->name('documentation.swapi');
+// });
+Route::domain(config('settings.swapi_url'))->get('/documentation', function () {
+    return view('documentation.swapi', ['domain' => request()->route('domain')]);
+})->name('documentation.swapi');
 
-Route::get('/', function () {
-    return view('welcome');
+Route::domain(config('settings.solar_url'))->get('/documentation', function () {
+    return view('documentation.solar', ['domain' => request()->route('domain')]);
+})->name('documentation.solar');
+
+Route::domain(config('settings.api_url'))->get('/', function () {
+    return view('welcome', ['domain' => request()->route('domain')]);
 });

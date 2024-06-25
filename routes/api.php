@@ -4,6 +4,7 @@ use App\Http\Resources\Body as BodyResource;
 use App\Http\Resources\Film as FilmResource;
 use App\Http\Resources\People as PeopleResource;
 use App\Http\Resources\Planet as PlanetResource;
+use App\Http\Resources\Solar as SolarResource;
 use App\Http\Resources\Specie as SpecieResource;
 use App\Http\Resources\Starship as StarshipResource;
 use App\Http\Resources\Swapi as SwapiResource;
@@ -31,6 +32,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::pattern('domain', config('settings.domain_pattern'));
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -39,7 +41,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::domain(config('settings.swapi_url'))->group(function () {
     Route::get('/', function () {
         return new SwapiResource(null);
-    });
+    })->name('swapi.root');
 
     Route::get('/films', function () {
         $films = QueryBuilder::for(Film::class)
@@ -49,9 +51,9 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         return $films ? $films : FilmResource::collection(Film::all());
     })->name('swapi.films');
 
-    Route::get('/films/{id}', function ($film) {
-        return new FilmResource(Film::findOrFail($film));
-    });
+    Route::get('/films/{id}', function ($domain, $id) {
+        return new FilmResource(Film::findOrFail($id));
+    })->name('swapi.film');
 
     Route::get('/people', function () {
         $peoples = QueryBuilder::for(People::class)
@@ -61,9 +63,10 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         return $peoples ? $peoples : PeopleResource::collection(People::all());
     })->name('swapi.people');
 
-    Route::get('/people/{id}', function ($people) {
-        return new PeopleResource(People::findOrFail($people));
-    });
+    Route::get('/people/{id}', function ($domain, $id) {
+        return new PeopleResource(People::findOrFail($id));
+    })->name('swapi.person');
+
     Route::get('/planets', function () {
         $planets = QueryBuilder::for(Planet::class)
         ->allowedFilters(['climate', 'name', 'terrain'])
@@ -72,9 +75,9 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         return $planets ? $planets : PlanetResource::collection(Planet::all());
     })->name('swapi.planets');
 
-    Route::get('/planets/{id}', function ($planet) {
-        return new PlanetResource(Planet::findOrFail($planet));
-    });
+    Route::get('/planets/{id}', function ($domain, $id) {
+        return new PlanetResource(Planet::findOrFail($id));
+    })->name('swapi.planet');
 
     Route::get('/species', function () {
         $species = QueryBuilder::for(Specie::class)
@@ -84,9 +87,9 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         return $species ? $species : SpecieResource::collection(Specie::all());
     })->name('swapi.species');
 
-    Route::get('/species/{id}', function ($specie) {
-        return new SpecieResource(Specie::findOrFail($specie));
-    });
+    Route::get('/species/{id}', function ($domain, $id) {
+        return new SpecieResource(Specie::findOrFail($id));
+    })->name('swapi.speciment');
 
     Route::get('/starships', function () {
         $starships = QueryBuilder::for(Starship::class)
@@ -96,9 +99,9 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         return $starships ? $starships : StarshipResource::collection(Starship::all());
     })->name('swapi.starships');
 
-    Route::get('/starships/{id}', function ($starship) {
-        return new StarshipResource(Starship::findOrFail($starship));
-    });
+    Route::get('/starships/{id}', function ($domain, $id) {
+        return new StarshipResource(Starship::findOrFail($id));
+    })->name('swapi.starship');
 
     Route::get('/transport', function () {
         $transport = QueryBuilder::for(Transport::class)
@@ -106,11 +109,11 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         ->get();
 
         return $transport ? $transport : TransportResource::collection(Transport::all());
-    })->name('swapi.transport');
+    })->name('swapi.transports');
 
-    Route::get('/transport/{id}', function ($transport) {
-        return new TransportResource(Transport::findOrFail($transport));
-    });
+    Route::get('/transport/{id}', function ($domain, $id) {
+        return new TransportResource(Transport::findOrFail($id));
+    })->name('swapi.transport');
 
     Route::get('/vehicles', function () {
         $vehicles = QueryBuilder::for(Vehicle::class)
@@ -120,9 +123,9 @@ Route::domain(config('settings.swapi_url'))->group(function () {
         return $vehicles ? $vehicles : VehicleResource::collection(Vehicle::all());
     })->name('swapi.vehicles');
 
-    Route::get('/vehicles/{id}', function ($vehicle) {
-        return new VehicleResource(Vehicle::findOrFail($vehicle));
-    });
+    Route::get('/vehicles/{id}', function ($domain, $id) {
+        return new VehicleResource(Vehicle::findOrFail($id));
+    })->name('swapi.vehicle');
 
     Route::fallback(function () {
         return response()->json(['message' => 'Not Found'], 404);
@@ -130,17 +133,21 @@ Route::domain(config('settings.swapi_url'))->group(function () {
 });
 
 Route::domain(config('settings.solar_url'))->group(function () {
+    Route::get('/', function () {
+        return new SolarResource(null);
+    })->name('solar.root');
+
     Route::get('/bodies', function () {
         $bodies = QueryBuilder::for(Body::class)
     ->allowedFilters(['alternativeName', 'name', 'discoveredBy'])
     ->get();
 
         return $bodies ? $bodies : BodyResource::collection(Body::all());
-    });
+    })->name('solar.bodies');
 
-    Route::get('/bodies/{id}', function ($body) {
-        return new BodyResource(Body::findOrFail($body));
-    });
+    Route::get('/bodies/{id}', function ($domain, $id) {
+        return new BodyResource(Body::findOrFail($id));
+    })->name('solar.body');
 
     Route::fallback(function () {
         return response()->json(['message' => 'Not Found'], 404);
