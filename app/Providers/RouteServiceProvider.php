@@ -37,6 +37,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
+        Route::pattern('domain', config('settings.domain_pattern'));
+
         $this->routes(function () {
             Route::middleware('api')
                 ->namespace($this->namespace)

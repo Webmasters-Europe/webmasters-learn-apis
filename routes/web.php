@@ -13,11 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::pattern('domain', config('settings.domain_pattern'));
-
-// Route::domain(config('settings.swapi_url'))->group(function () {
-//     Route::view('/documentation', 'documentation.swapi')->name('documentation.swapi');
-// });
 Route::domain(config('settings.swapi_url'))->get('/documentation', function () {
     return view('documentation.swapi', ['domain' => request()->route('domain')]);
 })->name('documentation.swapi');
